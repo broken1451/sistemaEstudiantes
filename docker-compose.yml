@@ -1,0 +1,16 @@
+version: "3"
+services:
+  db:
+    container_name: BD_SISTEMA_ESTUDIANTES
+    restart: always # Reiniciar el contenedor si se detiene
+    image: mongo:5.0
+    volumes:
+      - ./mongo:/data/db
+    ports:
+      - 27017:27017
+    environment:
+      MONGODB_DATABASE: ${MONGODB_DATABASE}
+volumes:
+  reserva_club:
+    external: true
+   
