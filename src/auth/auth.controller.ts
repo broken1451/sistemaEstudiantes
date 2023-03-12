@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
@@ -22,8 +22,8 @@ export class AuthController {
 
   @Get()
   // @Auth(ValidRoles.parents, ValidRoles.student, ValidRoles.admin)
-  findAll() {
-    return this.authService.findAll();
+  findAll( @Query('desde') desde: string) {
+    return this.authService.findAll(desde);
   }
 
   @Get('/:id')

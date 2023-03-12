@@ -13,7 +13,6 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { JwtInterface } from './interfaces/jwt.interface';
 import { LoginDto } from './dto/login.dto';
-import { ValidRoles } from './interfaces/role.interface';
 import { rolesPermited } from './utils/roles-permited';
 
 @Injectable()

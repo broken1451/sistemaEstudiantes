@@ -4,6 +4,9 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { AuthModule } from './auth/auth.module';
+import { DocenteModule } from './docente/docente.module';
+import { StudentModule } from './student/student.module';
+import { MateriaModule } from './materia/materia.module';
 
 @Module({
   imports: [
@@ -13,6 +16,9 @@ import { AuthModule } from './auth/auth.module';
       rootPath: join(__dirname, '../', 'public'),
     }),
     AuthModule,
+    DocenteModule,
+    StudentModule,
+    MateriaModule,
   ],
   controllers: [],
   providers: [],
