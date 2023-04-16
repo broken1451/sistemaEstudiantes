@@ -1,11 +1,21 @@
-import { BadRequestException } from "@nestjs/common";
+import { BadRequestException } from '@nestjs/common';
 
-export const rolesPermited = (rolesReq: string[], rolesPermited: string[]) => {
-    for (const rol of rolesReq) {
-        if (!rolesPermited.includes(rol)) {
-          throw new BadRequestException(
-            `El rol ingresado no es permitido, roles permitidos [${rolesPermited}]`,
-          );
-        }
-      }
-}
+let rolesNotRepeated: string[] = [];
+
+export const rolesPermited = (rolesReq: string[], rolesPermited: string[]): string[] => {
+  
+  rolesNotRepeated = rolesReq;
+
+  rolesNotRepeated = rolesReq?.filter((item, index) => {
+    return rolesReq?.indexOf(item) === index;
+  });
+
+  for (const rol of rolesNotRepeated) {
+    if (!rolesPermited.includes(rol)) {
+      throw new BadRequestException(
+        `El rol ingresado no es permitido, roles permitidos [${rolesPermited}]`,
+      );
+    }
+  }
+  return rolesNotRepeated
+};

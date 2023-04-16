@@ -8,6 +8,9 @@ import { InjectModel } from '@nestjs/mongoose';
 
 @Injectable()
 export class DocenteService {
+
+  public specialites: string[] = [];
+
   constructor(
     @InjectModel(Docente.name) private readonly docenteModel: Model<Docente>,
     private readonly configService: ConfigService,
@@ -21,6 +24,18 @@ export class DocenteService {
     speciality_teacher = speciality_teacher.map((val) =>
       val.toLocaleLowerCase().trim(),
     );
+
+    this.specialites = speciality_teacher?.filter((item, index) => {
+      return speciality_teacher?.indexOf(item) === index;
+    });
+
+    speciality_teacher =  this.specialites;
+
+    const docenteExist =  await this.docenteModel.findOne({nro_identidad})
+  
+    if (docenteExist) {
+      throw new BadRequestException(`El docente con el nro_identidad ${docenteExist.nro_identidad} ya existe`);
+    }
 
     const docente = await this.docenteModel.create({
       name_teacher,
@@ -47,7 +62,6 @@ export class DocenteService {
       throw new BadRequestException(`${id} no es a valid mongo id`);
     }
     const docenteDb = await this.docenteModel.findById(id);
-
     if (!docenteDb) {
       throw new BadRequestException(`El docente con el id ${id} no existe`);
     }
@@ -61,10 +75,22 @@ export class DocenteService {
     let { name_teacher, lastname_teacher, nro_identidad, speciality_teacher, ...rest } = updateDocenteDto;
     name_teacher = name_teacher.toLowerCase().trim();
     lastname_teacher = lastname_teacher.toLowerCase().trim();
-    nro_identidad = nro_identidad.toLowerCase().trim();
+    nro_identidad = nro_identidad?.toLowerCase()?.trim();
     speciality_teacher = speciality_teacher.map((val) =>
       val.toLocaleLowerCase().trim(),
     );
+
+    this.specialites = speciality_teacher?.filter((item, index) => {
+      return speciality_teacher?.indexOf(item) === index;
+    });
+
+    speciality_teacher =  this.specialites;
+
+    const docenteExist =  await this.docenteModel.findOne({nro_identidad})
+  
+    if (docenteExist) {
+      throw new BadRequestException(`El docente con el nro_identidad ${docenteExist.nro_identidad} ya existe`);
+    }
 
     const docenteUpdate = await this.docenteModel.findByIdAndUpdate(
       id,

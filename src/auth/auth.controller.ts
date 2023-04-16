@@ -20,6 +20,12 @@ export class AuthController {
     return this.authService.create(createAuthDto);
   }
 
+
+  @Get('/findUserByTerm/:term')
+  findUserByTerm(@Param('term') term: string,  @Query('desde') desde: string) {
+    return this.authService.findUserByTerm(term, desde);
+  }
+
   @Get()
   // @Auth(ValidRoles.parents, ValidRoles.student, ValidRoles.admin)
   findAll( @Query('desde') desde: string) {

@@ -18,22 +18,22 @@ export class MateriaController {
   }
 
   @Get('/byTeacher/:idDocente')
-  findMateriasByTeacher(@Query('desde') desde: string, @Param('idDocente') idDocente: string) {
-    return this.materiaService.findMateriasByTeacher(desde, idDocente);
+  findMateriasByTeacher(@Query('desde') desde: string, @Query('name_materia') name_materia: string, @Param('idDocente') idDocente: string) {
+    return this.materiaService.findMateriasByTeacher(desde, idDocente, name_materia);
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.materiaService.findOne(+id);
+    return this.materiaService.findOne(id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateMateriaDto: UpdateMateriaDto) {
-    return this.materiaService.update(+id, updateMateriaDto);
+    return this.materiaService.update(id, updateMateriaDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.materiaService.remove(+id);
+    return this.materiaService.remove(id);
   }
 }

@@ -31,6 +31,9 @@ export class Auth extends Document {
 
     @Prop({ type: Boolean, default: true })
     isActive: boolean;
+
+    @Prop({ type: Number, default: 0 })
+    retry: number;
 }
 
 export const UserShema = SchemaFactory.createForClass(Auth);

@@ -31,6 +31,12 @@ export class StudentService {
     jornada = jornada.toLowerCase().trim();
     direccion = direccion.toLowerCase();
 
+    const studentExist =  await this.studentModel.findOne({nro_identidad})
+  
+    if (studentExist) {
+      throw new BadRequestException(`El estudiante con el nro_identidad ${studentExist.nro_identidad} ya existe`);
+    }
+
     const student = await this.studentModel.create({
       nro_identidad,
       name_student,
@@ -45,13 +51,13 @@ export class StudentService {
   }
 
   async findAll(desde: string = '0') {
-    const docentes = await this.studentModel
+    const students = await this.studentModel
       .find({})
       .skip(Number(desde))
       .limit(5)
       .sort({ created: 1 });
-    const countsDocentes = await this.studentModel.countDocuments({});
-    return { docentes, countsDocentes };
+    const countsStudents = await this.studentModel.countDocuments({});
+    return { students, countsStudents };
   }
 
   async findOne(id: string) {
@@ -81,10 +87,17 @@ export class StudentService {
 
     name_student = name_student.toLowerCase().trim();
     lastname_student = lastname_student.toLowerCase().trim();
-    nro_identidad = nro_identidad.toLowerCase().trim();
+    nro_identidad = nro_identidad?.toLowerCase()?.trim();
     sexo = sexo.toUpperCase().trim();
     jornada = jornada.toLowerCase().trim();
     direccion = direccion.toLowerCase();
+
+    const studentExist =  await this.studentModel.findOne({nro_identidad})
+  
+    if (studentExist) {
+      throw new BadRequestException(`El estudiante con el nro_identidad ${studentExist.nro_identidad} ya existe`);
+    }
+
 
     const studentUpdate = await this.studentModel.findByIdAndUpdate(
       id,
