@@ -41,6 +41,9 @@ $ yarn run start
 # watch mode
 $ yarn run start:dev
 
+# docker mode
+$ docker compose up -d 
+
 # production mode
 $ yarn run start:prod
 ```

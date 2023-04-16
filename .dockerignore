@@ -1,0 +1,6 @@
+# archivos q no van a ser copiados en la imagen a crear
+dist/
+node_modules/
+.gitignore
+.git/
+mongo/
