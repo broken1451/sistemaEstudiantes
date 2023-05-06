@@ -1,7 +1,7 @@
 # version: "3"
 # services:
 #   app:
-#     image: broken1451/sistema_estudiante:2.0.0
+#     image: sistema-estudiantes:2.0.0
 #     volumes:
 #       - ./:/app/
 #       - /app/node_modules # <-- en caso de que no exista esta carpeta la tengamos en el proyecto y hacer le mapeo del volumen

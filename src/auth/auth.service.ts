@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  Logger,
   UnauthorizedException,
 } from '@nestjs/common';
 import { CreateAuthDto } from './dto/create-auth.dto';
@@ -70,6 +71,9 @@ export class AuthService {
     }
 
     user.retry = 0;
+    await this.userModel.findByIdAndUpdate(user._id, user, {
+      new: true,
+    });
     return { user, token: this.getJWT({ id: user._id }), menu: this.obtenerMenu(user.roles) };
   }
 
@@ -128,12 +132,14 @@ export class AuthService {
   }
 
   async findAll(desde: string = '0') {
+    const logger = new Logger('findAll user');
     const users = await this.userModel
       .find({})
       .skip(Number(desde))
       .limit(5)
       .sort({ created: 1 });
     const countsUser = await this.userModel.countDocuments({});
+    logger.log(`findAll user`);
     return { users, countsUser };
   }
 
