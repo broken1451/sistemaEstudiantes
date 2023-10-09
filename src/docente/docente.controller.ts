@@ -1,14 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, ParseIntPipe } from '@nestjs/common';
 import { DocenteService } from './docente.service';
 import { CreateDocenteDto } from './dto/create-docente.dto';
 import { UpdateDocenteDto } from './dto/update-docente.dto';
+import { RutPipePostDocente } from 'src/pipes/rut-docente.pipe';
 
 @Controller('docente')
 export class DocenteController {
   constructor(private readonly docenteService: DocenteService) {}
 
   @Post()
-  create(@Body() createDocenteDto: CreateDocenteDto) {
+  create(@Body(new RutPipePostDocente()) createDocenteDto: CreateDocenteDto) {
     return this.docenteService.create(createDocenteDto);
   }
 

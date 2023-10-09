@@ -132,9 +132,6 @@ export class NotasService {
     return noteDeleted;
   }
 
-
-
-
   async filterByQuery(
     name_materia?: string,
     name_student?: string,
@@ -144,14 +141,6 @@ export class NotasService {
     desde?: string,
   ) {
     if (name_materia && name_student) {
-      console.log({
-        name_materia,
-        name_student,
-        student,
-        materia,
-        docente,
-        desde,
-      });
 
       let expRegularNameMateria = new RegExp(name_materia, 'i');
       await this.materiaModel

@@ -11,9 +11,9 @@ export const rolesPermited = (rolesReq: string[], rolesPermited: string[]): stri
   });
 
   for (const rol of rolesNotRepeated) {
-    if (!rolesPermited.includes(rol)) {
+    if (!rolesPermited?.includes(rol)) {
       throw new BadRequestException(
-        `El rol ingresado no es permitido, roles permitidos [${rolesPermited}]`,
+        `El rol ingresado ${rol} no es permitido, roles permitidos [${rolesPermited}]`,
       );
     }
   }

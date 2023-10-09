@@ -24,7 +24,7 @@ export class CreateDocenteDto {
     @ApiProperty()
     @IsString({ each: true }) // cada uno de los elementos  del arreglo  tiene q ser string
     @IsArray()
-    @IsNotEmpty()
+    @IsOptional()
     speciality_teacher: string[];
 
     @ApiProperty()

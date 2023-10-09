@@ -29,6 +29,9 @@ export class Auth extends Document {
     @Prop({ type: Date, default: Date.now })
     created: Date;
 
+    @Prop({ type: Date, default: Date.now })
+    updated: Date;
+
     @Prop({ type: Boolean, default: true })
     isActive: boolean;
 
@@ -36,4 +39,4 @@ export class Auth extends Document {
     retry: number;
 }
 
-export const UserShema = SchemaFactory.createForClass(Auth);
+export const UserShema = SchemaFactory.createForClass(Auth); 

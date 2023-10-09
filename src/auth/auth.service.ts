@@ -15,6 +15,8 @@ import * as bcrypt from 'bcrypt';
 import { JwtInterface } from './interfaces/jwt.interface';
 import { LoginDto } from './dto/login.dto';
 import { rolesPermited } from './utils/roles-permited';
+import { existsSync } from 'fs';
+import { join } from 'path';
 
 @Injectable()
 export class AuthService {
@@ -33,6 +35,7 @@ export class AuthService {
 
   async login(loginDto: LoginDto) {
     const { password, email, nro_identity, username } = loginDto;
+    const logger = new Logger('Login user');
 
     let user: Auth;
 
@@ -74,7 +77,13 @@ export class AuthService {
     await this.userModel.findByIdAndUpdate(user._id, user, {
       new: true,
     });
-    return { user, token: this.getJWT({ id: user._id }), menu: this.obtenerMenu(user.roles) };
+    logger.log(`Login user`);
+    return {
+      ok: true,
+      user,
+      token: this.getJWT({ id: user._id }),
+      menu: this.obtenerMenu(user.roles),
+    };
   }
 
   async create(createAuthDto: CreateAuthDto) {
@@ -82,7 +91,7 @@ export class AuthService {
     name = name.toLowerCase().trim();
     email = email?.toLowerCase().trim();
     username = username?.toLowerCase().trim();
-    nro_identity = nro_identity?.toLowerCase().trim();
+    nro_identity = nro_identity?.toUpperCase().trim();
 
     let userExist: Auth;
 
@@ -116,7 +125,17 @@ export class AuthService {
     const saltOrRounds = 10;
     password = bcrypt.hashSync(password, saltOrRounds);
 
-    let rolesPermit = rolesPermited(restProperties.roles, this.rolesPermited);
+    if (!restProperties?.roles) {
+      restProperties.roles = ['ESTUDIANTE'];
+    }
+
+    if (restProperties?.roles.length == 0) {
+      restProperties.roles = ['ESTUDIANTE'];
+    }
+
+    //  (!restProperties?.roles) ? restProperties?.roles?.push('ADMIN'): ['']
+
+    let rolesPermit = rolesPermited(restProperties?.roles, this.rolesPermited);
     restProperties.roles = rolesPermit;
 
     const userCreated = await this.userModel.create({
@@ -136,7 +155,7 @@ export class AuthService {
     const users = await this.userModel
       .find({})
       .skip(Number(desde))
-      .limit(5)
+      .limit(0)
       .sort({ created: 1 });
     const countsUser = await this.userModel.countDocuments({});
     logger.log(`findAll user`);
@@ -156,17 +175,32 @@ export class AuthService {
   }
 
   async update(id: string, updateAuthDto: UpdateAuthDto) {
-    await this.findOne(id);
-    let rolesPermit = rolesPermited(updateAuthDto.roles, this.rolesPermited);
-    updateAuthDto.roles = rolesPermit;
- 
-    rolesPermit.forEach(rol => {
-      updateAuthDto.roles.push(rol);  
-    });
-    
-    let rolesPermitNotRepeted = rolesPermited(updateAuthDto.roles, this.rolesPermited);
-    updateAuthDto.roles = rolesPermitNotRepeted;
-    
+    const userFound = await this.findOne(id);
+
+    if (updateAuthDto.roles) {
+      let rolesPermit = rolesPermited(updateAuthDto.roles, this.rolesPermited);
+      updateAuthDto.roles = rolesPermit;
+
+      rolesPermit.forEach((rol) => {
+        updateAuthDto.roles.push(rol);
+      });
+
+      let rolesPermitNotRepeted = rolesPermited(
+        updateAuthDto.roles,
+        this.rolesPermited,
+      );
+      updateAuthDto.roles = rolesPermitNotRepeted;
+
+      if (updateAuthDto.roles.length == 0) {
+        updateAuthDto.roles = [];
+      }
+    }
+
+    // TODO update password User
+    // const saltOrRounds = 10;
+    // updateAuthDto.password = bcrypt.hashSync(updateAuthDto.password, saltOrRounds);
+
+    updateAuthDto.updated = Date.now();
     const userUpdate = await this.userModel.findByIdAndUpdate(
       id,
       updateAuthDto,
@@ -200,20 +234,29 @@ export class AuthService {
 
   async findUserByTerm(term: string, desde: string = '0') {
     let expRegular = new RegExp(term, 'i');
-    const users = await this.userModel.find({$or: [
+    const users = await this.userModel
+      .find(
+        {
+          $or: [
             { name: expRegular },
             { email: expRegular },
-            { username: expRegular }]},'-password')
+            { username: expRegular },
+          ],
+        },
+        '-password',
+      )
       .skip(Number(desde))
       .limit(5)
       .sort({ created: 1 });
     const countsUsers = await this.userModel.countDocuments({
       name: expRegular,
+      email: expRegular,
+      username: expRegular,
     });
-    return { users, countsUsers };
+    console.log('here', expRegular);
+    console.log(countsUsers);
+    return { users, countsUsers: users.length };
   }
-
-
 
   obtenerMenu(roles: string[]) {
     let menu = [];
@@ -394,5 +437,33 @@ export class AuthService {
         ];
         return menu;
     }
+  }
+
+  async updateImgUser(id: string, nombreArchivo: string) {
+    const user = await this.userModel.findById(id).exec();
+
+    if (user.img == '') {
+      user.img = nombreArchivo;
+      await user.save();
+      user.password = ':)';
+    } else {
+      user.img = nombreArchivo;
+      await user.save();
+      user.password = ':)';
+    }
+    return { ok: true, user };
+  }
+
+  getAvatarUserImage(imageName: string) {
+    const logger = new Logger('getAvatarUserImage');
+    // const path = join(__dirname,'ruta donde esta la imagen', nombre archivo a buscar)
+    let path = join(__dirname, '../../static/users/', imageName); // crear path fisico donde se encuentra la imagen en el servidor
+    if (existsSync(path)) {
+      logger.log(`getAvatarUserImage`);
+      return path;
+    }
+    path = join(__dirname, '../../static/noImage/no-img.jpeg');
+    logger.log(`getAvatarUserImage`);
+    return path;
   }
 }

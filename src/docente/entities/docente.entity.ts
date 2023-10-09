@@ -13,7 +13,7 @@ export class Docente extends Document  {
     @Prop({ required: [false, "El lastname_teacher es requerido"], type: String })
     lastname_teacher: string;
 
-    @Prop({ required: [true] ,type: Array, default: [''] })
+    @Prop({ required: [true], type: Array, default: [] })
     speciality_teacher: string[];
 
     @Prop({ type: Date, default: Date.now })
@@ -21,6 +21,9 @@ export class Docente extends Document  {
 
     @Prop({ type: Boolean, default: true })
     isActive: boolean;
+
+    @Prop({ type: Date, default: Date.now })
+    updated: Date;
 
     @Prop({ type: String, default: '' })
     img: string;
